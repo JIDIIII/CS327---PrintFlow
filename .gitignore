@@ -1,0 +1,40 @@
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Virtual environments and packaging output
+.venv/
+venv/
+env/
+ENV/
+build/
+dist/
+*.egg-info/
+
+# Local secrets and environment files
+.env
+.env.*
+!.env.example
+
+# Local databases and logs
+*.sqlite3
+*.sqlite3-journal
+*.log
+
+# Django collectstatic output
+staticfiles/
+
+# Operating system and editor files
+.DS_Store
+._*
+.idea/
+
+# Large media and screenshots kept outside Git
+VIDEO/
+screenshots/

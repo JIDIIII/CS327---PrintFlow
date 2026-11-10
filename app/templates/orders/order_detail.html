@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}{{ order.order_number }} | Orders | PrintFlow{% endblock %}
+{% block page_styles %}<link rel="stylesheet" href="{% static 'css/orders/orders.css' %}">{% endblock %}
+{% block skeleton %}<div class="skeleton-frame app-skeleton"><span class="skeleton-block skeleton-brand"></span><span class="skeleton-block skeleton-heading"></span><span class="skeleton-block skeleton-panel"></span><span class="skeleton-block skeleton-panel"></span></div>{% endblock %}
+{% block navigation %}{% include "shared/app_navigation.html" with nav_page="orders" %}{% endblock %}
+{% block content %}
+<main id="main-content" class="feature-main detail-page orders-main">
+    <a class="back-link" href="{% url 'orders:list' %}">← Back to orders</a>
+    {% for message in messages %}<div class="message success" role="status" aria-live="polite">{{ message }}</div>{% endfor %}
+    <div class="page-heading order-detail-heading"><div><p class="eyebrow">Order record</p><h1>{{ order.order_number }}</h1><p>Created {{ order.created_at|date:"M j, Y · g:i A" }}</p></div><span class="status-badge status-{{ order.status|lower }}">{{ order.get_status_display }}</span></div>
+    <div class="detail-grid">
+        <section class="form-card detail-card">
+            <p class="section-kicker">Job details</p><h2>{{ order.service.name }}</h2>
+            <dl class="detail-list"><div><dt>Customer</dt><dd><a class="text-link" href="{% url 'customers:detail' order.customer_id %}">{{ order.customer.name }}</a></dd></div><div><dt>Size / format</dt><dd>{{ order.size }}</dd></div><div><dt>Quantity</dt><dd>{{ order.quantity }}</dd></div><div><dt>Deadline</dt><dd>{{ order.deadline|date:"M j, Y · g:i A" }}{% if order.is_overdue %}<span class="status-badge status-cancelled">Overdue</span>{% endif %}</dd></div><div><dt>Created by</dt><dd>{{ order.created_by.get_full_name|default:order.created_by.username }}</dd></div></dl>
+            {% if order.special_instructions %}<div class="instruction-note"><span>Special instructions</span><p>{{ order.special_instructions|linebreaksbr }}</p></div>{% endif %}
+        </section>
+        <section class="form-card detail-card payment-card">
+            <p class="section-kicker">Payment</p><h2>₱{{ order.total_price|floatformat:2 }}</h2>
+            <dl class="detail-list"><div><dt>Paid</dt><dd>₱{{ order.paid_total|floatformat:2 }}</dd></div><div><dt>Remaining</dt><dd>₱{{ order.remaining_display|floatformat:2 }}</dd></div><div><dt>Payment status</dt><dd><span class="payment-badge">{{ order.payment_label }}</span></dd></div></dl>
+            {% if order.payments.all %}<div class="payment-history"><h3>Recorded payments</h3>{% for payment in order.payments.all %}<div><span>{{ payment.paid_at|date:"M j, Y" }}{% if payment.payment_method %} · {{ payment.payment_method }}{% endif %}</span><strong>₱{{ payment.amount|floatformat:2 }}</strong></div>{% endfor %}</div>{% endif %}
+        </section>
+    </div>
+    <section class="form-card history-card"><p class="section-kicker">Production record</p><h2>Status history</h2>{% if order.status_history.all %}<ol class="history-list">{% for event in order.status_history.all %}<li><span class="history-dot" aria-hidden="true"></span><div><strong>{{ event.get_to_status_display }}</strong><p>{{ event.changed_at|date:"M j, Y · g:i A" }}{% if event.changed_by %} · {{ event.changed_by.get_full_name|default:event.changed_by.username }}{% endif %}</p>{% if event.note %}<p>{{ event.note }}</p>{% endif %}</div></li>{% endfor %}</ol>{% else %}<p class="muted-copy">No status changes have been recorded yet.</p>{% endif %}</section>
+</main>
+{% endblock %}

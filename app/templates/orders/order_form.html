@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}New order | PrintFlow{% endblock %}
+{% block page_styles %}<link rel="stylesheet" href="{% static 'css/orders/orders.css' %}">{% endblock %}
+{% block skeleton %}<div class="skeleton-frame app-skeleton"><span class="skeleton-block skeleton-brand"></span><span class="skeleton-block skeleton-heading"></span><span class="skeleton-block skeleton-panel"></span></div>{% endblock %}
+{% block navigation %}{% include "shared/app_navigation.html" with nav_page="orders" %}{% endblock %}
+{% block content %}
+<main id="main-content" class="feature-main form-page orders-main">
+    <a class="back-link" href="{% url 'orders:list' %}">← Back to orders</a>
+    <div class="page-heading"><div><p class="eyebrow">Production workspace</p><h1>New order</h1><p>Capture the job details and put it on the schedule.</p></div></div>
+    {% if not has_customers %}<div class="message message-info" role="status">Add a customer before creating an order. <a href="{% url 'customers:create' %}">Add customer</a></div>{% endif %}
+    {% if not has_services %}<div class="message message-info" role="status">No active print services are available. Ask a workspace admin to add a service before creating an order.</div>{% endif %}
+    <form method="post" class="form-card record-form">
+        {% csrf_token %}
+        {% if form.non_field_errors %}<div class="form-error" role="alert">{{ form.non_field_errors }}</div>{% endif %}
+        <div class="form-grid">
+            {% for field in form %}
+            <div class="field{% if field.name == 'special_instructions' %} full-field{% endif %}">
+                <label for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %}<span class="required-mark"> *</span>{% endif %}</label>
+                {{ field }}
+                {% if field.name == 'deadline' %}<small class="field-help">Use the time zone configured for this PrintFlow workspace.</small>{% endif %}
+                <div id="id_{{ field.name }}-errors" class="field-error" role="alert">{% for error in field.errors %}{{ error }}{% endfor %}</div>
+            </div>
+            {% endfor %}
+        </div>
+        <p class="form-note">The order total is calculated from the selected service price and quantity.</p>
+        <div class="form-actions"><a class="button secondary" href="{% url 'orders:list' %}">Cancel</a><button class="button primary" type="submit"{% if not has_customers or not has_services %} disabled{% endif %}>Create order <span aria-hidden="true">→</span></button></div>
+    </form>
+</main>
+{% endblock %}

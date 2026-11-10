@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Create an account | PrintFlow{% endblock %}
+{% block page_styles %}<link rel="stylesheet" href="{% static 'css/shared/auth.css' %}"><link rel="stylesheet" href="{% static 'css/register/register.css' %}">{% endblock %}
+{% block navigation %}{% endblock %}
+{% block skeleton %}<div class="auth-skeleton skeleton-frame"><span class="skeleton-block skeleton-brand"></span><span class="skeleton-block skeleton-heading"></span><span class="skeleton-block skeleton-copy"></span><span class="skeleton-block skeleton-input"></span><span class="skeleton-block skeleton-input"></span><span class="skeleton-block skeleton-button"></span></div>{% endblock %}
+{% block content %}
+<main id="main-content" class="auth-shell">
+    <section class="auth-form-panel" aria-labelledby="register-heading">
+        <div class="form-wrap register-wrap">
+            <a class="brand auth-brand" href="{% url 'home:home' %}"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span><span>PrintFlow</span></a>
+            <p class="eyebrow">Start with a clear workspace</p>
+            <h1 id="register-heading">Create your account</h1>
+            <p class="intro">Set up your PrintFlow workspace in a few steps.</p>
+            {% for message in messages %}<div class="message {{ message.tags }}" role="status" aria-live="polite">{{ message }}</div>{% endfor %}
+            {% if form.non_field_errors %}<div class="form-error" role="alert">{{ form.non_field_errors|striptags }}</div>{% endif %}
+            <form method="post">
+                {% csrf_token %}
+                <div class="field-grid">
+                    <div class="field"><label for="{{ form.first_name.id_for_label }}">First name</label>{{ form.first_name }}<div id="id_first_name-errors" class="field-error" role="alert">{% for error in form.first_name.errors %}{{ error }}{% endfor %}</div></div>
+                    <div class="field"><label for="{{ form.last_name.id_for_label }}">Last name</label>{{ form.last_name }}<div id="id_last_name-errors" class="field-error" role="alert">{% for error in form.last_name.errors %}{{ error }}{% endfor %}</div></div>
+                </div>
+                <div class="field"><label for="{{ form.username.id_for_label }}">Username</label>{{ form.username }}<div id="id_username-errors" class="field-error" role="alert">{% for error in form.username.errors %}{{ error }}{% endfor %}</div>{% if form.username.help_text %}<small class="field-help">{{ form.username.help_text|safe }}</small>{% endif %}</div>
+                <div class="field"><label for="{{ form.email.id_for_label }}">Email</label>{{ form.email }}<div id="id_email-errors" class="field-error" role="alert">{% for error in form.email.errors %}{{ error }}{% endfor %}</div></div>
+                <div class="field"><label for="{{ form.password1.id_for_label }}">Password</label><div class="password-box">{{ form.password1 }}<button class="toggle-password" type="button" data-password-toggle="{{ form.password1.id_for_label }}" aria-label="Show password">Show</button></div>{% if form.password1.help_text %}<small class="field-help">{{ form.password1.help_text|safe }}</small>{% endif %}<div id="id_password1-errors" class="field-error" role="alert">{% for error in form.password1.errors %}{{ error }}{% endfor %}</div></div>
+                <div class="field"><label for="{{ form.password2.id_for_label }}">Confirm password</label><div class="password-box">{{ form.password2 }}<button class="toggle-password" type="button" data-password-toggle="{{ form.password2.id_for_label }}" aria-label="Show password">Show</button></div><div id="id_password2-errors" class="field-error" role="alert">{% for error in form.password2.errors %}{{ error }}{% endfor %}</div></div>
+                <button class="button primary wide-button" type="submit">Create account <span aria-hidden="true">→</span></button>
+            </form>
+            <p class="switch-copy">Already have an account? <a class="text-link" href="{% url 'login:login' %}">Log in</a></p>
+        </div>
+    </section>
+    <aside class="auth-art register-art" aria-label="PrintFlow print samples">
+        <div class="auth-art-copy"><p class="eyebrow">Your shop, in sync</p><h2>Good work deserves a good workflow.</h2><p>Bring every request and production step into view.</p></div>
+        <div class="register-samples" aria-hidden="true"><div class="sample-poster"><span>PRINT / 01</span><b>Make<br>something<br>real.</b><i></i></div><div class="sample-swatches"><span></span><span></span><span></span><small>COLOR PROOF</small></div><div class="sample-card">PrintFlow<br><small>SHOP WORKSPACE</small></div></div>
+        <span class="art-side-note">PrintFlow · shop workspace</span>
+    </aside>
+</main>
+{% endblock %}
+{% block page_scripts %}<script defer src="{% static 'js/register/register.js' %}"></script>{% endblock %}

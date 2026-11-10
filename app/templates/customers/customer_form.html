@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}{% if is_new %}Add customer{% else %}Edit customer{% endif %} | PrintFlow{% endblock %}
+{% block page_styles %}<link rel="stylesheet" href="{% static 'css/customers/customers.css' %}">{% endblock %}
+{% block skeleton %}<div class="skeleton-frame app-skeleton"><span class="skeleton-block skeleton-brand"></span><span class="skeleton-block skeleton-heading"></span><span class="skeleton-block skeleton-panel"></span></div>{% endblock %}
+{% block navigation %}{% include "shared/app_navigation.html" with nav_page="customers" %}{% endblock %}
+{% block content %}
+<main id="main-content" class="feature-main form-page customers-main">
+    <a class="back-link" href="{% if customer %}{% url 'customers:detail' customer.pk %}{% else %}{% url 'customers:list' %}{% endif %}">← Back to customers</a>
+    <div class="page-heading"><div><p class="eyebrow">Customer book</p><h1>{% if is_new %}Add customer{% else %}Edit customer{% endif %}</h1><p>{% if is_new %}Save contact details for the next print request.{% else %}Keep this customer’s details accurate and easy to find.{% endif %}</p></div></div>
+    <form method="post" class="form-card record-form">
+        {% csrf_token %}{% if form.non_field_errors %}<div class="form-error" role="alert">{{ form.non_field_errors }}</div>{% endif %}
+        <div class="form-grid">{% for field in form %}<div class="field{% if field.name == 'address' or field.name == 'notes' %} full-field{% endif %}"><label for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %}<span class="required-mark"> *</span>{% endif %}</label>{{ field }}<div id="id_{{ field.name }}-errors" class="field-error" role="alert">{% for error in field.errors %}{{ error }}{% endfor %}</div></div>{% endfor %}</div>
+        <div class="form-actions"><a class="button secondary" href="{% if customer %}{% url 'customers:detail' customer.pk %}{% else %}{% url 'customers:list' %}{% endif %}">Cancel</a><button class="button primary" type="submit">{% if is_new %}Add customer{% else %}Save changes{% endif %} <span aria-hidden="true">→</span></button></div>
+    </form>
+</main>
+{% endblock %}

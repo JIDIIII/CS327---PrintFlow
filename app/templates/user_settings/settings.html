@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Settings | PrintFlow{% endblock %}
+{% block page_styles %}<link rel="stylesheet" href="{% static 'css/user_settings/settings.css' %}">{% endblock %}
+{% block skeleton %}<div class="skeleton-frame app-skeleton"><span class="skeleton-block skeleton-brand"></span><span class="skeleton-block skeleton-heading"></span><span class="skeleton-block skeleton-panel"></span><span class="skeleton-block skeleton-panel"></span></div>{% endblock %}
+{% block navigation %}{% include "shared/app_navigation.html" with nav_page="settings" %}{% endblock %}
+{% block content %}
+<main id="main-content" class="feature-main settings-main">
+    <div class="page-heading"><div><p class="eyebrow">Personalize your workspace</p><h1>Settings</h1><p>Choose how PrintFlow looks and which updates you receive.</p></div></div>
+    {% for message in messages %}<div class="message success" role="status" aria-live="polite">{{ message }}</div>{% endfor %}
+    <form method="post" class="settings-layout">
+        {% csrf_token %}
+        <aside class="settings-menu" aria-label="Settings sections">
+            <p class="menu-label">On this page</p><a href="#account">Account</a><a href="#appearance">Appearance</a><a href="#notifications">Notifications</a>
+            <div class="settings-account"><span class="avatar small-avatar">{{ user.first_name|slice:":1"|upper }}{{ user.last_name|slice:":1"|upper }}</span><div><strong>{{ user.get_full_name|default:user.username }}</strong><span>@{{ user.username }}</span></div></div>
+        </aside>
+        <div class="settings-panels">
+            <section class="form-card" id="account">
+                <p class="section-kicker">Account</p><h2>Your workspace account</h2>
+                <div class="account-row"><span class="avatar small-avatar">{{ user.first_name|slice:":1"|upper }}{{ user.last_name|slice:":1"|upper }}</span><div><strong>{{ user.get_full_name|default:user.username }}</strong><span>{{ user.email|default:"No email added yet" }}</span></div><a class="text-link" href="{% url 'profile:profile' %}">Edit profile <span aria-hidden="true">→</span></a></div>
+            </section>
+            <section class="form-card" id="appearance">
+                <p class="section-kicker">Appearance</p><h2>Set the tone</h2>
+                <div class="setting-row"><div><label for="{{ form.dark_mode.id_for_label }}">Dark mode</label><small>Use a darker workspace in low light.</small></div><span class="switch">{{ form.dark_mode }}<i aria-hidden="true"></i></span></div>
+            </section>
+            <section class="form-card" id="notifications">
+                <p class="section-kicker">Notifications</p><h2>Stay informed</h2>
+                <div class="setting-row"><div><label for="{{ form.email_notifications.id_for_label }}">Email notifications</label><small>Receive important updates about your print workflow.</small></div><span class="switch">{{ form.email_notifications }}<i aria-hidden="true"></i></span></div>
+                <div class="form-actions"><button class="button primary" type="submit">Save settings <span aria-hidden="true">→</span></button></div>
+            </section>
+        </div>
+    </form>
+</main>
+{% endblock %}

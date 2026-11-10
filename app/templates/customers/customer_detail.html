@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}{{ customer.name }} | Customers | PrintFlow{% endblock %}
+{% block page_styles %}<link rel="stylesheet" href="{% static 'css/customers/customers.css' %}">{% endblock %}
+{% block skeleton %}<div class="skeleton-frame app-skeleton"><span class="skeleton-block skeleton-brand"></span><span class="skeleton-block skeleton-heading"></span><span class="skeleton-block skeleton-panel"></span><span class="skeleton-block skeleton-panel"></span></div>{% endblock %}
+{% block navigation %}{% include "shared/app_navigation.html" with nav_page="customers" %}{% endblock %}
+{% block content %}
+<main id="main-content" class="feature-main detail-page customers-main">
+    <a class="back-link" href="{% url 'customers:list' %}">← Back to customers</a>
+    {% for message in messages %}<div class="message success" role="status" aria-live="polite">{{ message }}</div>{% endfor %}
+    <div class="page-heading customer-detail-heading"><div class="customer-title"><span class="customer-avatar customer-avatar-large" aria-hidden="true">{{ customer.initials }}</span><div><p class="eyebrow">Customer record</p><h1>{{ customer.name }}</h1><p>Added {{ customer.created_at|date:"M j, Y" }}</p></div></div><a class="button secondary" href="{% url 'customers:edit' customer.pk %}">Edit customer</a></div>
+    <div class="customer-detail-grid">
+        <section class="form-card detail-card"><p class="section-kicker">Contact details</p><h2>How to reach {{ customer.name }}</h2><dl class="detail-list"><div><dt>Phone</dt><dd>{% if customer.contact_number %}<a href="tel:{{ customer.contact_number }}">{{ customer.contact_number }}</a>{% else %}Not added{% endif %}</dd></div><div><dt>Email</dt><dd>{% if customer.email %}<a href="mailto:{{ customer.email }}">{{ customer.email }}</a>{% else %}Not added{% endif %}</dd></div><div><dt>Address</dt><dd>{{ customer.address|default:"Not added"|linebreaksbr }}</dd></div></dl>{% if customer.notes %}<div class="instruction-note"><span>Notes</span><p>{{ customer.notes|linebreaksbr }}</p></div>{% endif %}</section>
+        <section class="form-card detail-card customer-order-summary"><p class="section-kicker">Print activity</p><h2>{{ order_count }} order{{ order_count|pluralize }}</h2><p>Orders connected to this customer stay together here.</p><a class="button primary" href="{% url 'orders:create' %}">Create an order <span aria-hidden="true">→</span></a></section>
+    </div>
+    <section class="form-card history-card"><div class="panel-heading"><div><p class="section-kicker">Customer activity</p><h2>Recent orders</h2></div></div>{% if recent_orders %}<div class="table-wrap"><table class="data-table"><thead><tr><th scope="col">Order</th><th scope="col">Service</th><th scope="col">Placed</th><th scope="col">Deadline</th><th scope="col">Status</th></tr></thead><tbody>{% for order in recent_orders %}<tr><td data-label="Order"><a class="table-primary-link" href="{% url 'orders:detail' order.pk %}">{{ order.order_number }}</a></td><td data-label="Service">{{ order.service.name }}</td><td data-label="Placed">{{ order.created_at|date:"M j, Y" }}</td><td data-label="Deadline">{{ order.deadline|date:"M j, Y" }}</td><td data-label="Status"><span class="status-badge status-{{ order.status|lower }}">{{ order.get_status_display }}</span></td></tr>{% endfor %}</tbody></table></div>{% else %}<div class="empty-state compact-empty"><span class="empty-mark" aria-hidden="true">▤</span><h3>No orders yet</h3><p>Orders for this customer will appear here.</p></div>{% endif %}</section>
+</main>
+{% endblock %}

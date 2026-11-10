@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Customers | PrintFlow{% endblock %}
+{% block page_styles %}<link rel="stylesheet" href="{% static 'css/customers/customers.css' %}">{% endblock %}
+{% block skeleton %}
+<div class="skeleton-frame app-skeleton customers-skeleton">
+    <span class="skeleton-block skeleton-brand"></span>
+    <div class="skeleton-nav-row"><span class="skeleton-block"></span><span class="skeleton-block"></span><span class="skeleton-block"></span><span class="skeleton-block"></span><span class="skeleton-block"></span></div>
+    <div class="skeleton-page-heading"><div><span class="skeleton-block skeleton-heading"></span><span class="skeleton-block skeleton-page-copy"></span></div><span class="skeleton-block skeleton-button"></span></div>
+    <span class="skeleton-block customer-skeleton-summary"></span>
+    <div class="skeleton-customer-toolbar"><span class="skeleton-block"></span><span class="skeleton-block"></span></div>
+    <div class="skeleton-customer-table"><div class="skeleton-customer-row skeleton-customer-head">{% for _ in "123456" %}<span class="skeleton-block"></span>{% endfor %}</div>{% for _ in "1234" %}<div class="skeleton-customer-row"><span class="skeleton-block skeleton-customer-name"></span><span class="skeleton-block"></span><span class="skeleton-block"></span><span class="skeleton-block"></span><span class="skeleton-block"></span><span class="skeleton-block"></span></div>{% endfor %}</div>
+</div>
+{% endblock %}
+{% block navigation %}{% include "shared/app_navigation.html" with nav_page="customers" %}{% endblock %}
+{% block content %}
+<main id="main-content" class="feature-main customers-main">
+    <div class="page-heading"><div><p class="eyebrow">People behind the print</p><h1>Customers</h1><p>Manage customer information and view their printing activity.</p></div><a class="button primary" href="{% url 'customers:create' %}">Add customer <span aria-hidden="true">+</span></a></div>
+    <section class="customer-summary" aria-label="Customer summary"><article class="summary-card"><span>Total customers</span><strong>{{ total_customers }}</strong><small>Saved in your workspace</small></article><p>Customer details stay connected to their orders, so the job history is easy to find.</p></section>
+    <section class="customers-workspace" aria-labelledby="customer-list-heading">
+        <div class="list-heading"><div><p class="section-kicker">Customer book</p><h2 id="customer-list-heading">All customers <span>{{ customers.paginator.count }}</span></h2></div>
+            <form class="customer-search" method="get" action="{% url 'customers:list' %}"><label class="search-field"><span class="sr-only">Search customers</span><span class="search-icon" aria-hidden="true">⌕</span><input type="search" name="q" value="{{ search }}" placeholder="Search name, contact, or email…" autocomplete="off"></label><button class="button secondary" type="submit">Search</button>{% if search %}<a class="clear-filters" href="{% url 'customers:list' %}">Clear</a>{% endif %}</form>
+        </div>
+        {% if customers %}
+        <div class="table-wrap customer-table-wrap"><table class="data-table customer-table"><thead><tr><th scope="col">Customer</th><th scope="col">Contact</th><th scope="col">Email</th><th scope="col">Orders</th><th scope="col">Added</th><th scope="col"><span class="sr-only">Actions</span></th></tr></thead><tbody>
+            {% for customer in customers %}<tr><td data-label="Customer"><div class="customer-identity"><span class="customer-avatar" aria-hidden="true">{{ customer.initials }}</span><div><a class="table-primary-link" href="{% url 'customers:detail' customer.pk %}">{{ customer.name }}</a>{% if customer.user %}<small class="table-subline">@{{ customer.user.username }}</small>{% endif %}</div></div></td><td data-label="Contact">{{ customer.contact_number|default:"—" }}</td><td data-label="Email">{% if customer.email %}<a href="mailto:{{ customer.email }}">{{ customer.email }}</a>{% else %}<span class="muted-copy">Not added</span>{% endif %}</td><td data-label="Orders"><span class="order-count">{{ customer.order_count }}</span></td><td data-label="Added">{{ customer.created_at|date:"M j, Y" }}</td><td data-label="Actions"><div class="row-actions"><a class="row-action" href="{% url 'customers:detail' customer.pk %}">View</a><a class="row-action" href="{% url 'customers:edit' customer.pk %}">Edit</a></div></td></tr>{% endfor %}
+        </tbody></table></div>
+        {% else %}<div class="empty-state customers-empty">{% if search %}<span class="empty-mark" aria-hidden="true">⌕</span><h3>No matching customers</h3><p>Try another name, contact number, or email address.</p><a class="button secondary" href="{% url 'customers:list' %}">Clear search</a>{% else %}<span class="empty-mark" aria-hidden="true">◌</span><h3>No customers yet</h3><p>Add your first customer to keep their contact details and print activity together.</p><a class="button primary" href="{% url 'customers:create' %}">Add customer <span aria-hidden="true">+</span></a>{% endif %}</div>{% endif %}
+        {% if customers.has_other_pages %}<nav class="pagination" aria-label="Customer pages">{% if customers.has_previous %}<a href="?q={{ search|urlencode }}&amp;page={{ customers.previous_page_number }}">← Previous</a>{% endif %}<span>Page {{ customers.number }} of {{ customers.paginator.num_pages }}</span>{% if customers.has_next %}<a href="?q={{ search|urlencode }}&amp;page={{ customers.next_page_number }}">Next →</a>{% endif %}</nav>{% endif %}
+    </section>
+</main>
+{% endblock %}

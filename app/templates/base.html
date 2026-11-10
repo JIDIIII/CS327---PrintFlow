@@ -1,0 +1,27 @@
+{% load static %}
+<!doctype html>
+<html lang="en" data-theme="{% if ui_settings and ui_settings.dark_mode %}dark{% else %}light{% endif %}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f8fafc">
+    <title>{% block title %}PrintFlow{% endblock %}</title>
+    <link rel="icon" type="image/svg+xml" href="{% static 'images/shared/printflow-mark.svg' %}">
+    <link rel="stylesheet" href="{% static 'css/shared/printflow.css' %}">
+    {% block page_styles %}{% endblock %}
+    <script>document.documentElement.classList.add("js-loading");</script>
+    <script defer src="{% static 'js/shared/loading.js' %}"></script>
+    <noscript><style>.loading-skeleton{display:none!important}.page-content{opacity:1!important}</style></noscript>
+</head>
+<body{% if body_class %} class="{{ body_class }}"{% endif %}>
+    <div class="loading-skeleton" data-skeleton aria-hidden="true">
+        {% block skeleton %}<div class="skeleton-frame"><span class="skeleton-block skeleton-brand"></span><span class="skeleton-block skeleton-heading"></span><span class="skeleton-block skeleton-copy"></span><span class="skeleton-block skeleton-panel"></span></div>{% endblock %}
+    </div>
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+    <div class="page-content">
+        {% block navigation %}{% include 'shared/app_navigation.html' %}{% endblock %}
+        {% block content %}{% endblock %}
+    </div>
+    {% block page_scripts %}{% endblock %}
+</body>
+</html>

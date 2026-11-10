@@ -1,0 +1,18 @@
+.settings-main { animation: fade-up 340ms ease both; }
+.settings-layout { display: grid; grid-template-columns: 225px minmax(0, 1fr); align-items: start; gap: 18px; }
+.settings-menu { position: sticky; top: 96px; padding: 17px 12px; }
+.menu-label { margin: 0 10px 10px; color: var(--muted); font-size: 10px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.settings-menu > a { display: block; padding: 10px; border-radius: 8px; color: var(--muted); text-decoration: none; font-size: 12px; font-weight: 700; }
+.settings-menu > a:hover { color: var(--primary-deep); background: var(--soft-cyan); }
+.settings-account { display: flex; align-items: center; gap: 9px; margin: 25px 5px 0; padding-top: 15px; border-top: 1px solid var(--line); }
+.small-avatar { width: 34px; height: 34px; margin: 0; border-width: 2px; border-radius: 11px; font-size: 12px; }
+.settings-account strong, .settings-account span, .account-row strong, .account-row span { display: block; }.settings-account strong, .account-row strong { overflow-wrap: anywhere; font-size: 11px; }.settings-account span, .account-row span { margin-top: 3px; color: var(--muted); font-size: 10px; }
+.settings-panels { display: grid; gap: 15px; }.settings-panels .form-card { padding: 21px; }.settings-panels h2 { margin: 0 0 17px; font-size: 19px; letter-spacing: -.03em; }
+.account-row { display: flex; align-items: center; gap: 12px; padding: 13px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel-soft); }.account-row .text-link { margin-left: auto; white-space: nowrap; font-size: 11px; }
+.setting-row { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 16px 0; border-top: 1px solid var(--line); }
+.setting-row > div:first-child { display: grid; gap: 4px; }.setting-row > div:first-child label { color: var(--ink); font-size: 13px; font-weight: 700; cursor: pointer; }.setting-row small { color: var(--muted); font-size: 11px; }
+.switch { position: relative; display: inline-flex; flex: 0 0 auto; width: 46px; height: 26px; }.switch input { position: absolute; z-index: 2; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }.switch i { position: absolute; inset: 0; border: 1px solid var(--line); border-radius: 999px; background: #cbd5e1; transition: background-color 160ms ease, border-color 160ms ease; }.switch i::after { position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: white; box-shadow: 0 1px 3px rgb(15 23 42 / 20%); transition: transform 160ms ease; content: ""; }.switch input:checked + i { border-color: var(--primary); background: var(--primary); }.switch input:checked + i::after { transform: translateX(20px); }.switch input:focus-visible + i { outline: 3px solid color-mix(in srgb, var(--sky) 72%, white); outline-offset: 3px; }
+.settings-panels .form-actions { margin-top: 12px; }
+@media (max-width: 760px) { .settings-layout { grid-template-columns: 1fr; }.settings-menu { position: static; display: flex; align-items: center; gap: 4px; padding: 8px; }.menu-label { display: none; }.settings-menu > a { padding: 9px 10px; }.settings-account { display: none; } }
+@media (max-width: 480px) { .settings-panels .form-card { padding: 17px; }.account-row { flex-wrap: wrap; }.account-row .text-link { margin-left: 46px; }.setting-row { gap: 12px; } }
+@media (prefers-reduced-motion: reduce) { .settings-main { animation: none; }.switch i, .switch i::after { transition: none; } }

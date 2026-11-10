@@ -1,0 +1,9 @@
+.auth-print-stack { position: relative; width: min(430px, 80%); height: 310px; margin: 40px auto 20px; }
+.auth-sheet { position: absolute; width: 74%; height: 90%; padding: 20px; box-shadow: 0 22px 50px rgb(0 0 0 / 26%); color: #0f172a; }
+.auth-sheet-back { top: 8px; left: 13%; transform: rotate(7deg); background: #edc957; }
+.auth-sheet-back span { font-size: 9px; font-weight: 800; letter-spacing: .1em; }
+.auth-sheet-front { top: 0; left: 0; transform: rotate(-4deg); background: #f5f8f4; }
+.auth-sheet-front i { display: block; width: 72px; height: 72px; margin: 18px 0 8px auto; border-radius: 50%; background: #ef735d; box-shadow: -50px 25px 0 #06a9ba; }
+.auth-sheet-front b { display: block; font-size: 36px; letter-spacing: -.07em; line-height: .9; }
+.auth-sheet-front small { display: block; margin-top: 15px; color: #536371; font-size: 8px; font-weight: 800; letter-spacing: .1em; }
+.auth-color-dot { position: absolute; right: 0; bottom: 8%; width: 76px; height: 76px; border: 12px solid #f7fafc; border-radius: 50%; background: #f28d56; box-shadow: 0 0 0 1px rgb(255 255 255 / 40%); }

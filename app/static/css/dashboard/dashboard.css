@@ -1,0 +1,33 @@
+.dashboard-main, .feature-main { width: min(1240px, calc(100% - 48px)); margin: 0 auto; padding: 56px 0 88px; }
+.dashboard-stats { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 13px; margin-bottom: 20px; }
+.stat-card { min-height: 134px; padding: 17px; animation: fade-up 360ms ease both; }
+.stat-card:nth-child(2) { animation-delay: 35ms; }.stat-card:nth-child(3) { animation-delay: 70ms; }.stat-card:nth-child(4) { animation-delay: 105ms; }.stat-card:nth-child(5) { animation-delay: 140ms; }
+.stat-card > span, .stat-card small { display: block; color: var(--muted); font-size: 11px; }
+.stat-card strong { display: block; margin: 17px 0 6px; font-size: 31px; font-weight: 760; letter-spacing: -.05em; line-height: 1; }
+.stat-card-accent { border-color: color-mix(in srgb, var(--primary) 35%, var(--line)); background: var(--soft-cyan); }
+.stat-card-customers { background: var(--soft-blue); }
+.dashboard-panels { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(300px, .8fr); gap: 17px; }
+.dashboard-panel { min-width: 0; padding: 21px; }
+.panel-heading, .list-heading { display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-bottom: 17px; }
+.panel-heading h2, .list-heading h2 { margin: 0; font-size: 19px; letter-spacing: -.035em; }
+.panel-heading .section-kicker, .list-heading .section-kicker { margin-bottom: 5px; }
+.panel-heading .text-link { font-size: 12px; white-space: nowrap; }
+.empty-state { min-height: 215px; }
+.deadline-panel { display: flex; flex-direction: column; }
+.deadline-list { display: grid; gap: 0; margin: 0; padding: 0; list-style: none; }
+.deadline-list li { display: grid; grid-template-columns: 39px minmax(0, 1fr) auto; align-items: center; gap: 10px; padding: 13px 0; border-top: 1px solid var(--line); }
+.deadline-date { display: grid; justify-items: center; padding: 5px 3px; border-radius: 8px; background: var(--panel-soft); }
+.deadline-date strong { font-size: 17px; line-height: 1; }.deadline-date small { margin-top: 3px; color: var(--muted); font-size: 9px; font-weight: 750; text-transform: uppercase; }
+.deadline-copy { display: grid; min-width: 0; gap: 3px; }
+.deadline-copy a { overflow: hidden; color: var(--primary-deep); text-decoration: none; font-size: 12px; font-weight: 750; text-overflow: ellipsis; }
+.deadline-copy span { overflow: hidden; color: var(--muted); font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
+.deadline-time { color: var(--muted); font-size: 10px; white-space: nowrap; }
+.compact-empty { flex: 1; min-height: 170px; padding: 26px 12px; }
+.compact-empty h3 { font-size: 15px; }.compact-empty p { margin-bottom: 0; }
+.deadline-link { align-self: flex-start; margin-top: 14px; font-size: 12px; }
+.app-skeleton .skeleton-stats { grid-template-columns: repeat(5, 1fr); }
+.dashboard-skeleton-stats { gap: 13px; margin-top: 24px; }.dashboard-skeleton-stats .skeleton-block { min-height: 120px; }.dashboard-skeleton-panels { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(260px, .8fr); gap: 17px; margin-top: 17px; }.skeleton-dashboard-panel { min-height: 260px; padding: 20px; border: 1px solid var(--line); border-radius: 14px; background: var(--panel); }.skeleton-panel-title { width: 155px; height: 18px; margin-bottom: 13px; }.skeleton-dashboard-row { height: 34px; margin-top: 9px; border-radius: 5px; }.skeleton-deadline-row { height: 45px; margin-top: 11px; border-radius: 7px; }
+@media (max-width: 1050px) { .dashboard-stats { grid-template-columns: repeat(3, 1fr); }.dashboard-panels { grid-template-columns: 1fr; } }
+@media (max-width: 1050px) { .dashboard-skeleton-panels { grid-template-columns: 1fr; } }
+@media (max-width: 700px) { .dashboard-main, .feature-main { width: min(100% - 32px, 650px); padding-top: 38px; }.dashboard-stats { grid-template-columns: 1fr 1fr; gap: 10px; }.stat-card { min-height: 116px; padding: 14px; }.stat-card strong { margin-top: 13px; font-size: 28px; }.dashboard-panel { padding: 15px; }.deadline-list li { grid-template-columns: 38px minmax(0, 1fr); }.deadline-time { grid-column: 2; }.app-skeleton .skeleton-stats { grid-template-columns: 1fr 1fr; }.dashboard-skeleton-stats .skeleton-block { min-height: 99px; }.skeleton-dashboard-panel { min-height: 210px; padding: 14px; }.skeleton-page-heading { align-items: flex-start; flex-direction: column; }.skeleton-page-heading .skeleton-button { flex-basis: 38px; width: 132px; } }
+@media (prefers-reduced-motion: reduce) { .stat-card { animation: none; } }

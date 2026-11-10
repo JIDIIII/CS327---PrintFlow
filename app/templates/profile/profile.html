@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Profile | PrintFlow{% endblock %}
+{% block page_styles %}<link rel="stylesheet" href="{% static 'css/profile/profile.css' %}">{% endblock %}
+{% block skeleton %}<div class="skeleton-frame app-skeleton"><span class="skeleton-block skeleton-brand"></span><span class="skeleton-block skeleton-heading"></span><span class="skeleton-block skeleton-panel"></span><span class="skeleton-block skeleton-panel"></span></div>{% endblock %}
+{% block navigation %}{% include "shared/app_navigation.html" with nav_page="profile" %}{% endblock %}
+{% block content %}
+<main id="main-content" class="feature-main profile-main">
+    <div class="page-heading"><div><p class="eyebrow">Your PrintFlow identity</p><h1>Profile</h1><p>Keep your account details and working context up to date.</p></div></div>
+    {% for message in messages %}<div class="message success" role="status" aria-live="polite">{{ message }}</div>{% endfor %}
+    <form method="post" class="profile-layout">
+        {% csrf_token %}
+        <section class="identity-card" aria-label="Account identity">
+            <div class="avatar">{{ user.first_name|slice:":1"|upper }}{{ user.last_name|slice:":1"|upper }}</div>
+            <p class="section-kicker">PrintFlow account</p>
+            <h2>{{ profile.full_name|default:user.get_full_name|default:user.username }}</h2>
+            <p>@{{ user.username }}</p>
+            <a href="mailto:{{ user.email }}">{{ user.email|default:"Add an email address" }}</a>
+        </section>
+        <div class="profile-panels">
+            <section class="form-card">
+                <div class="panel-heading"><div><p class="section-kicker">Account information</p><h2>Personal details</h2></div></div>
+                <div class="field-grid">
+                    <div class="field"><label for="{{ user_form.first_name.id_for_label }}">First name</label>{{ user_form.first_name }}{% for error in user_form.first_name.errors %}<div class="field-error" role="alert">{{ error }}</div>{% endfor %}</div>
+                    <div class="field"><label for="{{ user_form.last_name.id_for_label }}">Last name</label>{{ user_form.last_name }}{% for error in user_form.last_name.errors %}<div class="field-error" role="alert">{{ error }}</div>{% endfor %}</div>
+                    <div class="field full-field"><label for="profile-username">Username</label><input id="profile-username" value="{{ user.username }}" disabled><small class="field-help">Your username is used to sign in.</small></div>
+                    <div class="field full-field"><label for="{{ user_form.email.id_for_label }}">Email</label>{{ user_form.email }}{% for error in user_form.email.errors %}<div class="field-error" role="alert">{{ error }}</div>{% endfor %}</div>
+                </div>
+            </section>
+            <section class="form-card">
+                <div class="panel-heading"><div><p class="section-kicker">Profile details</p><h2>About you</h2></div></div>
+                <div class="field"><label for="{{ profile_form.full_name.id_for_label }}">Full name</label>{{ profile_form.full_name }}{% for error in profile_form.full_name.errors %}<div class="field-error" role="alert">{{ error }}</div>{% endfor %}</div>
+                <div class="field"><label for="{{ profile_form.bio.id_for_label }}">Bio</label>{{ profile_form.bio }}{% for error in profile_form.bio.errors %}<div class="field-error" role="alert">{{ error }}</div>{% endfor %}</div>
+                <div class="form-actions"><button class="button primary" type="submit">Save changes <span aria-hidden="true">→</span></button></div>
+            </section>
+        </div>
+    </form>
+</main>
+{% endblock %}

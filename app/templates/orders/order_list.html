@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Orders | PrintFlow{% endblock %}
+{% block page_styles %}<link rel="stylesheet" href="{% static 'css/orders/orders.css' %}">{% endblock %}
+{% block skeleton %}
+<div class="skeleton-frame app-skeleton orders-skeleton">
+    <span class="skeleton-block skeleton-brand"></span>
+    <div class="skeleton-nav-row"><span class="skeleton-block"></span><span class="skeleton-block"></span><span class="skeleton-block"></span><span class="skeleton-block"></span><span class="skeleton-block"></span></div>
+    <div class="skeleton-page-heading"><div><span class="skeleton-block skeleton-heading"></span><span class="skeleton-block skeleton-page-copy"></span></div><span class="skeleton-block skeleton-button"></span></div>
+    <div class="skeleton-stats order-skeleton-stats">{% for _ in "12345" %}<span class="skeleton-block"></span>{% endfor %}</div>
+    <div class="skeleton-filter-row"><span class="skeleton-block skeleton-filter-search"></span><span class="skeleton-block skeleton-filter-control"></span><span class="skeleton-block skeleton-filter-date"></span><span class="skeleton-block skeleton-filter-date"></span><span class="skeleton-block skeleton-filter-button"></span></div>
+    <div class="skeleton-order-table"><div class="skeleton-order-table-head">{% for _ in "123456789" %}<span class="skeleton-block"></span>{% endfor %}</div>{% for _ in "123" %}<div class="skeleton-order-row">{% for _ in "123456789" %}<span class="skeleton-block"></span>{% endfor %}</div>{% endfor %}</div>
+</div>
+{% endblock %}
+{% block navigation %}{% include "shared/app_navigation.html" with nav_page="orders" %}{% endblock %}
+{% block content %}
+<main id="main-content" class="feature-main orders-main">
+    <div class="page-heading">
+        <div><p class="eyebrow">Production workspace</p><h1>Orders</h1><p>Manage and track all printing orders in one place.</p></div>
+        <a class="button primary" href="{% url 'orders:create' %}">New order <span aria-hidden="true">+</span></a>
+    </div>
+    <section class="orders-summary" aria-label="Order totals">
+        <article class="summary-card summary-total"><span>Total orders</span><strong>{{ summary.total }}</strong><small>All recorded work</small></article>
+        <article class="summary-card"><span>Pending</span><strong>{{ summary.pending }}</strong><small>Waiting to start</small></article>
+        <article class="summary-card"><span>In progress</span><strong>{{ summary.in_progress }}</strong><small>On the production floor</small></article>
+        <article class="summary-card"><span>Ready for pickup</span><strong>{{ summary.ready }}</strong><small>Ready to hand over</small></article>
+        <article class="summary-card"><span>Completed</span><strong>{{ summary.completed }}</strong><small>Finished orders</small></article>
+    </section>
+    <section class="orders-workspace" aria-labelledby="orders-list-heading">
+        <div class="list-heading"><div><p class="section-kicker">Order register</p><h2 id="orders-list-heading">All orders <span>{{ orders.paginator.count }}</span></h2></div></div>
+        <form class="filter-bar" method="get" action="{% url 'orders:list' %}">
+            <label class="search-field"><span class="sr-only">Search orders</span><span class="search-icon" aria-hidden="true">⌕</span><input type="search" name="q" value="{{ search }}" placeholder="Search order, customer, or service…" autocomplete="off"></label>
+            <label class="filter-field"><span>Status</span><select name="status"><option value="">All statuses</option>{% for value, label in status_choices %}<option value="{{ value }}"{% if selected_status == value %} selected{% endif %}>{{ label }}</option>{% endfor %}</select></label>
+            <label class="filter-field date-filter"><span>From</span><input type="date" name="date_from" value="{{ date_from }}"></label>
+            <label class="filter-field date-filter"><span>To</span><input type="date" name="date_to" value="{{ date_to }}"></label>
+            <button class="button secondary filter-submit" type="submit">Apply filters</button>
+            {% if search or selected_status or date_from or date_to %}<a class="clear-filters" href="{% url 'orders:list' %}">Clear</a>{% endif %}
+        </form>
+        {% if orders %}
+        <div class="table-wrap order-table-wrap">
+            <table class="data-table order-table">
+                <thead><tr><th scope="col">Order</th><th scope="col">Customer</th><th scope="col">Service</th><th scope="col">Placed</th><th scope="col">Deadline</th><th scope="col">Total</th><th scope="col">Status</th><th scope="col">Payment</th><th scope="col"><span class="sr-only">Actions</span></th></tr></thead>
+                <tbody>
+                {% for order in orders %}
+                    <tr>
+                        <td data-label="Order"><a class="table-primary-link" href="{% url 'orders:detail' order.pk %}">{{ order.order_number }}</a><small class="table-subline">{{ order.quantity }} × {{ order.size }}</small></td>
+                        <td data-label="Customer">{{ order.customer.name }}</td>
+                        <td data-label="Service">{{ order.service.name }}</td>
+                        <td data-label="Placed">{{ order.created_at|date:"M j, Y" }}</td>
+                        <td data-label="Deadline"><span{% if order.is_overdue %} class="overdue-date"{% endif %}>{{ order.deadline|date:"M j, Y" }}</span>{% if order.is_overdue %}<small class="table-subline overdue-date">Overdue</small>{% endif %}</td>
+                        <td data-label="Total" class="money-cell">₱{{ order.total_price|floatformat:2 }}</td>
+                        <td data-label="Status"><span class="status-badge status-{{ order.status|lower }}">{{ order.get_status_display }}</span></td>
+                        <td data-label="Payment"><span class="payment-badge payment-{{ order.payment_key }}">{{ order.payment_label }}</span></td>
+                        <td data-label="Actions"><a class="row-action" href="{% url 'orders:detail' order.pk %}">View <span aria-hidden="true">→</span></a></td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state orders-empty">
+            <span class="empty-mark" aria-hidden="true">▤</span>
+            {% if search or selected_status or date_from or date_to %}<h3>No matching orders</h3><p>Try a different search or clear the filters to see all orders.</p><a class="button secondary" href="{% url 'orders:list' %}">Clear filters</a>
+            {% else %}<h3>No orders yet</h3><p>Create your first printing order to start tracking production.</p><a class="button primary" href="{% url 'orders:create' %}">Create order <span aria-hidden="true">+</span></a>{% endif %}
+        </div>
+        {% endif %}
+        {% if orders.has_other_pages %}<nav class="pagination" aria-label="Order pages">{% if orders.has_previous %}<a href="?q={{ search|urlencode }}&amp;status={{ selected_status|urlencode }}&amp;date_from={{ date_from }}&amp;date_to={{ date_to }}&amp;page={{ orders.previous_page_number }}">← Previous</a>{% endif %}<span>Page {{ orders.number }} of {{ orders.paginator.num_pages }}</span>{% if orders.has_next %}<a href="?q={{ search|urlencode }}&amp;status={{ selected_status|urlencode }}&amp;date_from={{ date_from }}&amp;date_to={{ date_to }}&amp;page={{ orders.next_page_number }}">Next →</a>{% endif %}</nav>{% endif %}
+    </section>
+</main>
+{% endblock %}
