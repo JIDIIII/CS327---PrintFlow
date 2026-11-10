@@ -1,4 +1,12 @@
 .customers-main { animation: fade-up 340ms ease both; }
+.customers-workspace { padding: 21px; }
+.customers-workspace .list-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 15px; }
+.customers-workspace .list-heading h2 { margin: 0; font-size: 20px; letter-spacing: -.035em; line-height: 1.25; }
+.customers-workspace .list-heading h2 span { margin-left: 5px; color: var(--muted); font-size: 12px; font-weight: 600; }
+.customer-search .search-field { position: relative; display: flex; min-width: 0; }
+.customer-search .search-field input { padding-left: 36px; }
+.customer-search .search-icon { position: absolute; top: 50%; left: 12px; transform: translateY(-50%); color: var(--muted); font-size: 20px; pointer-events: none; }
+.customer-search .clear-filters { align-self: center; color: var(--muted); font-size: 11px; font-weight: 700; text-decoration: none; }
 .customer-skeleton-summary { height: 94px; margin-top: 22px; }.skeleton-customer-toolbar { display: grid; grid-template-columns: minmax(220px, 1fr) 100px; gap: 10px; width: min(490px, 100%); margin: 17px 0 14px; }.skeleton-customer-toolbar .skeleton-block { height: 40px; }.skeleton-customer-table { overflow: hidden; border: 1px solid var(--line); border-radius: 11px; padding: 7px 14px; background: var(--panel); }.skeleton-customer-row { display: grid; grid-template-columns: 1.5fr 1fr 1.2fr .5fr .7fr .6fr; align-items: center; gap: 13px; min-height: 56px; border-bottom: 1px solid var(--line); }.skeleton-customer-row:last-child { border-bottom: 0; }.skeleton-customer-row .skeleton-block { width: 85%; height: 11px; }.skeleton-customer-row .skeleton-customer-name { height: 18px; }.skeleton-customer-head { min-height: 39px; }.skeleton-customer-head .skeleton-block { width: 65%; height: 8px; }
 .customer-summary { display: flex; align-items: center; gap: 18px; margin-bottom: 17px; }.customer-summary .summary-card { width: 215px; min-height: 104px; }.customer-summary .summary-card strong { margin-top: 11px; }.customer-summary > p { max-width: 400px; margin: 0; color: var(--muted); font-size: 12px; line-height: 1.6; }
 .customer-summary .summary-card { padding: 14px; }.customer-summary .summary-card > span, .customer-summary .summary-card > small { display: block; color: var(--muted); font-size: 10px; }.customer-summary .summary-card strong { display: block; margin: 11px 0 5px; font-size: 25px; font-variant-numeric: tabular-nums; }

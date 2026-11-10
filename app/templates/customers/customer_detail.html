@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 {% block title %}{{ customer.name }} | Customers | PrintFlow{% endblock %}
-{% block page_styles %}<link rel="stylesheet" href="{% static 'css/customers/customers.css' %}">{% endblock %}
+{% block page_styles %}<link rel="stylesheet" href="{% static 'css/customers/customers.css' %}?v=2">{% endblock %}
 {% block skeleton %}<div class="skeleton-frame app-skeleton"><span class="skeleton-block skeleton-brand"></span><span class="skeleton-block skeleton-heading"></span><span class="skeleton-block skeleton-panel"></span><span class="skeleton-block skeleton-panel"></span></div>{% endblock %}
 {% block navigation %}{% include "shared/app_navigation.html" with nav_page="customers" %}{% endblock %}
 {% block content %}
