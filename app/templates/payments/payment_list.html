@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Payments | PrintFlow{% endblock %}
+{% block page_styles %}<link rel="stylesheet" href="{% static 'css/payments/payments.css' %}?v=1">{% endblock %}
+{% block skeleton %}
+<div class="skeleton-frame app-skeleton payments-skeleton">
+    <span class="skeleton-block skeleton-brand"></span>
+    <div class="skeleton-nav-row">{% for _ in "123456" %}<span class="skeleton-block"></span>{% endfor %}</div>
+    <div class="skeleton-page-heading"><div><span class="skeleton-block skeleton-heading"></span><span class="skeleton-block skeleton-page-copy"></span></div></div>
+    <div class="payments-skeleton-stats">{% for _ in "123" %}<span class="skeleton-block"></span>{% endfor %}</div>
+    <span class="skeleton-block payments-skeleton-filter"></span>
+    <span class="skeleton-block payments-skeleton-table"></span>
+</div>
+{% endblock %}
+{% block navigation %}{% include "shared/app_navigation.html" with nav_page="payments" %}{% endblock %}
+{% block content %}
+<main id="main-content" class="feature-main payments-main">
+    <div class="page-heading">
+        <div><p class="eyebrow">Finance overview</p><h1>Payments</h1><p>Review recorded payments and follow each one back to its order.</p></div>
+    </div>
+    <section class="payments-summary" aria-label="Payment summary">
+        <article class="summary-card"><span>Payment records</span><strong>{{ summary.count }}</strong><small>Matching the current view</small></article>
+        <article class="summary-card payment-total-card"><span>Total received</span><strong>₱{{ summary.amount|default:0|floatformat:2 }}</strong><small>Across matching records</small></article>
+        <article class="summary-card"><span>Orders covered</span><strong>{{ summary.orders }}</strong><small>With matching payments</small></article>
+    </section>
+    <section class="payments-workspace" aria-labelledby="payments-heading">
+        <div class="list-heading"><div><p class="section-kicker">Payment register</p><h2 id="payments-heading">All payments <span>{{ payments.paginator.count }}</span></h2></div></div>
+        <form class="payments-filter-bar" method="get" action="{% url 'payments:list' %}">
+            <label class="search-field"><span class="sr-only">Search payments</span><span class="search-icon" aria-hidden="true">⌕</span><input type="search" name="q" value="{{ search }}" placeholder="Search order, customer, method, or reference…" autocomplete="off"></label>
+            <label class="filter-field"><span>Status</span><select name="status"><option value="">All statuses</option>{% for value, label in status_choices %}<option value="{{ value }}"{% if selected_status == value %} selected{% endif %}>{{ label }}</option>{% endfor %}</select></label>
+            <label class="filter-field date-filter"><span>From</span><input type="date" name="date_from" value="{{ date_from }}"></label>
+            <label class="filter-field date-filter"><span>To</span><input type="date" name="date_to" value="{{ date_to }}"></label>
+            <button class="button secondary filter-submit" type="submit">Apply filters</button>
+            {% if search or selected_status or date_from or date_to %}<a class="clear-filters" href="{% url 'payments:list' %}">Clear</a>{% endif %}
+        </form>
+        {% if date_error %}<p class="payment-filter-error" role="status">Enter valid dates to apply the date filters.</p>{% endif %}
+        {% if payments %}
+        <div class="table-wrap payments-table-wrap">
+            <table class="data-table payments-table">
+                <thead><tr><th scope="col">Payment</th><th scope="col">Order</th><th scope="col">Customer</th><th scope="col">Paid on</th><th scope="col">Method</th><th scope="col">Amount</th><th scope="col">Status</th><th scope="col">Recorded by</th></tr></thead>
+                <tbody>{% for payment in payments %}
+                    <tr>
+                        <td data-label="Payment"><strong>Payment #{{ payment.pk }}</strong>{% if payment.reference %}<small class="table-subline">Ref. {{ payment.reference }}</small>{% endif %}</td>
+                        <td data-label="Order"><a class="table-primary-link" href="{% url 'orders:detail' payment.order_id %}">{{ payment.order.order_number }}</a></td>
+                        <td data-label="Customer">{{ payment.order.customer.name }}</td>
+                        <td data-label="Paid on">{{ payment.paid_at|date:"M j, Y" }}<small class="table-subline">{{ payment.paid_at|date:"g:i A" }}</small></td>
+                        <td data-label="Method">{{ payment.payment_method|default:"—" }}</td>
+                        <td data-label="Amount" class="money-cell">₱{{ payment.amount|floatformat:2 }}</td>
+                        <td data-label="Status"><span class="payment-badge payment-record-status">{{ payment.payment_status|title }}</span></td>
+                        <td data-label="Recorded by">{{ payment.recorded_by.get_full_name|default:payment.recorded_by.username }}</td>
+                    </tr>
+                {% endfor %}</tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state payments-empty">
+            <span class="empty-mark" aria-hidden="true">₱</span>
+            {% if search or selected_status or date_from or date_to %}<h3>No matching payments</h3><p>Try a different search or clear the filters to review all recorded payments.</p><a class="button secondary" href="{% url 'payments:list' %}">Clear filters</a>
+            {% else %}<h3>No payments recorded</h3><p>Payments linked to orders will appear here when they are recorded.</p><a class="button secondary" href="{% url 'orders:list' %}">Review orders</a>{% endif %}
+        </div>
+        {% endif %}
+        {% if payments.has_other_pages %}<nav class="pagination" aria-label="Payment pages">{% if payments.has_previous %}<a href="?q={{ search|urlencode }}&amp;status={{ selected_status|urlencode }}&amp;date_from={{ date_from }}&amp;date_to={{ date_to }}&amp;page={{ payments.previous_page_number }}">← Previous</a>{% endif %}<span>Page {{ payments.number }} of {{ payments.paginator.num_pages }}</span>{% if payments.has_next %}<a href="?q={{ search|urlencode }}&amp;status={{ selected_status|urlencode }}&amp;date_from={{ date_from }}&amp;date_to={{ date_to }}&amp;page={{ payments.next_page_number }}">Next →</a>{% endif %}</nav>{% endif %}
+    </section>
+</main>
+{% endblock %}

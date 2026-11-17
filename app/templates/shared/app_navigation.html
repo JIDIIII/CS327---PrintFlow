@@ -8,6 +8,7 @@
         {% if user.is_authenticated %}
             <a{% if nav_page == 'dashboard' %} class="active"{% endif %} href="{% url 'dashboard:dashboard' %}">Dashboard</a>
             <a{% if nav_page == 'orders' %} class="active"{% endif %} href="{% url 'orders:list' %}">Orders</a>
+            <a{% if nav_page == 'payments' %} class="active"{% endif %} href="{% url 'payments:list' %}">Payments</a>
             <a{% if nav_page == 'customers' %} class="active"{% endif %} href="{% url 'customers:list' %}">Customers</a>
             <a{% if nav_page == 'profile' %} class="active"{% endif %} href="{% url 'profile:profile' %}">Profile</a>
             <a{% if nav_page == 'settings' %} class="active"{% endif %} href="{% url 'user_settings:settings' %}">Settings</a>
