@@ -3,7 +3,12 @@ from datetime import date
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db.models import Count, Q, Sum
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, redirect, render
+from django.contrib import messages
+from django.urls import reverse
+
+from apps.orders.models import Order
+from .forms import PaymentCreateForm
 
 from .models import Payment
 
@@ -70,4 +75,20 @@ def payment_list(request):
             "date_to": date_to,
             "date_error": bool((date_from and not parsed_from) or (date_to and not parsed_to)),
         },
+    )
+
+
+@login_required
+def payment_create(request, order_id):
+    order = get_object_or_404(Order.objects.select_related("customer"), pk=order_id)
+    form = PaymentCreateForm(request.POST or None, order=order)
+    if request.method == "POST" and form.is_valid():
+        payment = form.save_for_user(request.user)
+        messages.success(request, f"Payment #{payment.pk} was recorded.")
+        return redirect(reverse("orders:detail", args=[order.pk]))
+
+    return render(
+        request,
+        "payments/payment_form.html",
+        {"form": form, "order": order, "remaining": order.remaining_balance},
     )

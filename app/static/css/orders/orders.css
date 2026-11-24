@@ -18,4 +18,14 @@
 @media (max-width: 760px) { .orders-summary { grid-template-columns: repeat(2, 1fr); }.orders-workspace, .customers-workspace { padding: 15px; }.filter-bar { grid-template-columns: 1fr 1fr; }.search-field { grid-column: 1 / -1; }.filter-submit { grid-column: auto; }.clear-filters { grid-column: 2; grid-row: 3; }.order-table { min-width: 0; }.detail-grid { grid-template-columns: 1fr; }.detail-list > div { grid-template-columns: 105px 1fr; }.record-form { padding: 17px; } }
 @media (max-width: 760px) { .order-skeleton-stats { grid-template-columns: repeat(2, 1fr); }.skeleton-filter-row { grid-template-columns: 1fr 1fr; }.skeleton-filter-search { grid-column: 1 / -1; }.skeleton-order-table { padding: 7px; }.skeleton-order-table-head { display: none; }.skeleton-order-row { grid-template-columns: 1fr 1fr; gap: 8px; min-height: 0; margin-bottom: 8px; padding: 10px; border: 1px solid var(--line); border-radius: 9px; }.skeleton-order-row .skeleton-block { height: 10px; }.skeleton-order-row .skeleton-block:first-child { grid-column: 1 / -1; height: 14px; } }
 @media (max-width: 440px) { .orders-summary { gap: 8px; }.summary-card { min-height: 99px; padding: 12px; }.summary-card strong { font-size: 24px; }.filter-bar { grid-template-columns: 1fr; }.search-field, .filter-submit, .clear-filters { grid-column: auto; grid-row: auto; }.clear-filters { justify-self: end; }.order-detail-heading { align-items: flex-start !important; }.detail-card, .history-card { padding: 16px; }.skeleton-page-heading { align-items: flex-start; flex-direction: column; }.skeleton-page-heading .skeleton-button { flex-basis: 38px; width: 132px; }.skeleton-filter-row { grid-template-columns: 1fr; }.skeleton-filter-search { grid-column: auto; } }
+
+.detail-heading-actions { display: flex; align-items: center; gap: 10px; }
+.payment-action { display: inline-flex; margin-top: 18px; text-decoration: none; }
+.status-update-form { display: grid; grid-template-columns: minmax(170px, .8fr) minmax(220px, 1.4fr) auto; align-items: end; gap: 14px; }
+.status-update-form .field { margin: 0; }
+.status-update-form .field label { display: block; margin-bottom: 6px; }
+.status-update-form select, .status-update-form textarea { width: 100%; }
+.status-update-form textarea { min-height: 40px; }
+.status-update-form .button { white-space: nowrap; }
+@media (max-width: 760px) { .detail-heading-actions { align-items: flex-start; flex-direction: column; }.status-update-form { grid-template-columns: 1fr; }.status-update-form .button { justify-self: start; } }
 @media (prefers-reduced-motion: reduce) { .orders-main { animation: none; }.row-action span { transition: none; } }

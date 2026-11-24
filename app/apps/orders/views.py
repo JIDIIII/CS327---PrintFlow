@@ -10,8 +10,8 @@ from django.utils.dateparse import parse_date
 
 from apps.customers.models import Customer
 
-from .forms import OrderCreateForm
-from .models import Order, OrderStatus, PaymentStatus, PrintService
+from .forms import OrderCreateForm, OrderStatusForm
+from .models import Order, OrderStatus, OrderStatusHistory, PaymentStatus, PrintService
 
 
 @login_required
@@ -108,6 +108,27 @@ def order_detail(request, pk):
         ),
         pk=pk,
     )
+    status_form = OrderStatusForm(initial={"status": order.status})
+    if request.method == "POST":
+        status_form = OrderStatusForm(request.POST)
+        if status_form.is_valid():
+            new_status = status_form.cleaned_data["status"]
+            if new_status != order.status:
+                previous_status = order.status
+                order.status = new_status
+                order.save(update_fields=("status", "updated_at"))
+                OrderStatusHistory.objects.create(
+                    order=order,
+                    from_status=previous_status,
+                    to_status=new_status,
+                    changed_by=request.user,
+                    note=status_form.cleaned_data["note"],
+                )
+                messages.success(request, "Order status updated.")
+                return redirect("orders:detail", pk=order.pk)
+            messages.info(request, "The order is already in that status.")
+            return redirect("orders:detail", pk=order.pk)
+
     order.paid_total = sum((payment.amount for payment in order.payments.all()), Decimal("0.00"))
     if order.paid_total <= 0:
         order.payment_label = PaymentStatus.UNPAID.label
@@ -116,4 +137,29 @@ def order_detail(request, pk):
     else:
         order.payment_label = PaymentStatus.PAID.label
     order.remaining_display = max(order.total_price - order.paid_total, Decimal("0.00"))
-    return render(request, "orders/order_detail.html", {"order": order})
+    return render(
+        request,
+        "orders/order_detail.html",
+        {"order": order, "status_form": status_form},
+    )
+
+
+@login_required
+def order_edit(request, pk):
+    order = get_object_or_404(Order.objects.select_related("customer", "service"), pk=pk)
+    form = OrderCreateForm(request.POST or None, instance=order)
+    if request.method == "POST" and form.is_valid():
+        form.update_existing()
+        messages.success(request, f"Order {order.order_number} was updated.")
+        return redirect("orders:detail", pk=order.pk)
+
+    return render(
+        request,
+        "orders/order_form.html",
+        {
+            "form": form,
+            "order": order,
+            "has_customers": Customer.objects.exists(),
+            "has_services": form.fields["service"].queryset.exists(),
+        },
+    )

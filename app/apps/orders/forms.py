@@ -1,7 +1,7 @@
 from uuid import uuid4
 
 from django import forms
-from django.db import transaction
+from django.db import models, transaction
 from django.utils import timezone
 
 from apps.customers.models import Customer
@@ -34,7 +34,12 @@ class OrderCreateForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["customer"].queryset = Customer.objects.order_by("name", "id")
-        self.fields["service"].queryset = PrintService.objects.filter(is_active=True)
+        services = PrintService.objects.filter(is_active=True)
+        if self.instance.pk and self.instance.service_id:
+            services = PrintService.objects.filter(
+                models.Q(is_active=True) | models.Q(pk=self.instance.service_id)
+            )
+        self.fields["service"].queryset = services
         for name, field in self.fields.items():
             field.widget.attrs["aria-describedby"] = f"id_{name}-errors"
 
@@ -65,3 +70,30 @@ class OrderCreateForm(forms.ModelForm):
         )
         self.save_m2m()
         return order
+
+    @transaction.atomic
+    def update_existing(self):
+        order = super().save(commit=False)
+        order.total_price = order.service.price * order.quantity
+        order.save()
+        item = OrderItem.objects.filter(order=order).order_by("pk").first()
+        if item:
+            item.service = order.service
+            item.quantity = order.quantity
+            item.subtotal = order.total_price
+            item.save(update_fields=("service", "quantity", "subtotal"))
+        else:
+            OrderItem.objects.create(
+                order=order,
+                service=order.service,
+                quantity=order.quantity,
+                subtotal=order.total_price,
+            )
+        self.save_m2m()
+        return order
+
+
+class OrderStatusForm(forms.Form):
+    status = forms.ChoiceField(choices=OrderStatus.choices)
+    note = forms.CharField(required=False, widget=forms.Textarea(attrs={"rows": 2}))
+

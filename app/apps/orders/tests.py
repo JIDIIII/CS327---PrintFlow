@@ -123,6 +123,41 @@ class OrdersPageTests(TestCase):
             1,
         )
 
+    def test_order_can_be_edited_without_changing_its_number_or_status_history(self):
+        deadline = (timezone.now() + timedelta(days=5)).strftime("%Y-%m-%dT%H:%M")
+        response = self.client.post(
+            reverse("orders:edit", args=[self.order.pk]),
+            {
+                "customer": self.customer.pk,
+                "service": self.service.pk,
+                "size": "A2",
+                "quantity": 4,
+                "deadline": deadline,
+                "special_instructions": "Gloss finish",
+            },
+        )
+        self.assertRedirects(response, reverse("orders:detail", args=[self.order.pk]))
+        self.order.refresh_from_db()
+        self.assertEqual(self.order.order_number, "PF-ORDER0001")
+        self.assertEqual(self.order.total_price, Decimal("50.00"))
+        self.assertEqual(self.order.size, "A2")
+        self.assertEqual(self.order.items.get().quantity, 4)
+        self.assertEqual(self.order.status_history.count(), 0)
+
+    def test_status_change_is_saved_with_history_and_note(self):
+        response = self.client.post(
+            reverse("orders:detail", args=[self.order.pk]),
+            {"status": OrderStatus.IN_PROGRESS, "note": "Production started"},
+        )
+        self.assertRedirects(response, reverse("orders:detail", args=[self.order.pk]))
+        self.order.refresh_from_db()
+        event = self.order.status_history.first()
+        self.assertEqual(self.order.status, OrderStatus.IN_PROGRESS)
+        self.assertEqual(event.from_status, OrderStatus.PENDING)
+        self.assertEqual(event.to_status, OrderStatus.IN_PROGRESS)
+        self.assertEqual(event.changed_by, self.user)
+        self.assertEqual(event.note, "Production started")
+
     def test_orders_require_login_and_detail_does_not_expose_an_unknown_id(self):
         self.client.logout()
         response = self.client.get(reverse("orders:list"))

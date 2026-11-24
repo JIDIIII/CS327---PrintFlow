@@ -8,5 +8,6 @@ app_name = "orders"
 urlpatterns = [
     path("", views.order_list, name="list"),
     path("new/", views.order_create, name="create"),
+    path("<int:pk>/edit/", views.order_edit, name="edit"),
     path("<int:pk>/", views.order_detail, name="detail"),
 ]

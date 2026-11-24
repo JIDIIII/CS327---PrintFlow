@@ -8,7 +8,7 @@
 <main id="main-content" class="feature-main detail-page orders-main">
     <a class="back-link" href="{% url 'orders:list' %}">← Back to orders</a>
     {% for message in messages %}<div class="message success" role="status" aria-live="polite">{{ message }}</div>{% endfor %}
-    <div class="page-heading order-detail-heading"><div><p class="eyebrow">Order record</p><h1>{{ order.order_number }}</h1><p>Created {{ order.created_at|date:"M j, Y · g:i A" }}</p></div><span class="status-badge status-{{ order.status|lower }}">{{ order.get_status_display }}</span></div>
+    <div class="page-heading order-detail-heading"><div><p class="eyebrow">Order record</p><h1>{{ order.order_number }}</h1><p>Created {{ order.created_at|date:"M j, Y · g:i A" }}</p></div><div class="detail-heading-actions"><span class="status-badge status-{{ order.status|lower }}">{{ order.get_status_display }}</span><a class="button secondary" href="{% url 'orders:edit' order.pk %}">Edit order</a></div></div>
     <div class="detail-grid">
         <section class="form-card detail-card">
             <p class="section-kicker">Job details</p><h2>{{ order.service.name }}</h2>
@@ -18,9 +18,11 @@
         <section class="form-card detail-card payment-card">
             <p class="section-kicker">Payment</p><h2>₱{{ order.total_price|floatformat:2 }}</h2>
             <dl class="detail-list"><div><dt>Paid</dt><dd>₱{{ order.paid_total|floatformat:2 }}</dd></div><div><dt>Remaining</dt><dd>₱{{ order.remaining_display|floatformat:2 }}</dd></div><div><dt>Payment status</dt><dd><span class="payment-badge">{{ order.payment_label }}</span></dd></div></dl>
+            {% if order.remaining_display > 0 %}<a class="button primary payment-action" href="{% url 'payments:create' order.pk %}">Record payment</a>{% endif %}
             {% if order.payments.all %}<div class="payment-history"><h3>Recorded payments</h3>{% for payment in order.payments.all %}<div><span>{{ payment.paid_at|date:"M j, Y" }}{% if payment.payment_method %} · {{ payment.payment_method }}{% endif %}</span><strong>₱{{ payment.amount|floatformat:2 }}</strong></div>{% endfor %}</div>{% endif %}
         </section>
     </div>
+    <section class="form-card history-card status-update-card"><p class="section-kicker">Production workflow</p><h2>Update status</h2><form method="post" class="status-update-form" action="{% url 'orders:detail' order.pk %}">{% csrf_token %}<div class="field"><label for="id_status">New status</label>{{ status_form.status }}<div class="field-error" role="alert">{{ status_form.status.errors }}</div></div><div class="field"><label for="id_note">Change note <span class="muted-copy">(optional)</span></label>{{ status_form.note }}<div class="field-error" role="alert">{{ status_form.note.errors }}</div></div><button class="button secondary" type="submit">Save status</button></form></section>
     <section class="form-card history-card"><p class="section-kicker">Production record</p><h2>Status history</h2>{% if order.status_history.all %}<ol class="history-list">{% for event in order.status_history.all %}<li><span class="history-dot" aria-hidden="true"></span><div><strong>{{ event.get_to_status_display }}</strong><p>{{ event.changed_at|date:"M j, Y · g:i A" }}{% if event.changed_by %} · {{ event.changed_by.get_full_name|default:event.changed_by.username }}{% endif %}</p>{% if event.note %}<p>{{ event.note }}</p>{% endif %}</div></li>{% endfor %}</ol>{% else %}<p class="muted-copy">No status changes have been recorded yet.</p>{% endif %}</section>
 </main>
 {% endblock %}
