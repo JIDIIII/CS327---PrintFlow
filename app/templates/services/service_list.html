@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Services | PrintFlow{% endblock %}
+{% block page_styles %}<link rel="stylesheet" href="{% static 'css/services/services.css' %}">{% endblock %}
+{% block navigation %}{% include "shared/app_navigation.html" with nav_page="services" %}{% endblock %}
+{% block content %}
+<main id="main-content" class="feature-main services-main">
+    {% for message in messages %}<div class="message success" role="status">{{ message }}</div>{% endfor %}
+    <div class="page-heading"><div><p class="eyebrow">Shop setup</p><h1>Print services</h1><p>Manage the services and unit prices used to build new orders.</p></div><a class="button primary" href="{% url 'services:create' %}">Add service <span aria-hidden="true">+</span></a></div>
+    <section class="services-workspace form-card" aria-labelledby="services-heading">
+        <div class="list-heading"><div><p class="section-kicker">Service catalog</p><h2 id="services-heading">Available services <span>{{ services|length }}</span></h2></div></div>
+        {% if services %}<div class="table-wrap"><table class="data-table services-table"><thead><tr><th scope="col">Service</th><th scope="col">Category</th><th scope="col">Unit price</th><th scope="col">Availability</th><th scope="col"><span class="sr-only">Actions</span></th></tr></thead><tbody>{% for service in services %}<tr><td data-label="Service"><strong>{{ service.name }}</strong>{% if service.description %}<small class="table-subline">{{ service.description|truncatechars:100 }}</small>{% endif %}</td><td data-label="Category">{{ service.category|default:"—" }}</td><td data-label="Unit price" class="money-cell">₱{{ service.price|floatformat:2 }}</td><td data-label="Availability"><span class="service-state{% if not service.is_active %} service-state-inactive{% endif %}">{% if service.is_active %}Active{% else %}Inactive{% endif %}</span></td><td data-label="Actions"><a class="row-action" href="{% url 'services:edit' service.pk %}">Edit <span aria-hidden="true">→</span></a></td></tr>{% endfor %}</tbody></table></div>{% else %}<div class="empty-state"><span class="empty-mark" aria-hidden="true">▤</span><h3>No services yet</h3><p>Add the print products your shop offers. Only active services appear on new orders.</p><a class="button primary" href="{% url 'services:create' %}">Add first service</a></div>{% endif %}
+    </section>
+</main>
+{% endblock %}

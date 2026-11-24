@@ -1,0 +1,11 @@
+.services-main, .service-form-page { max-width: 1120px; }
+.services-workspace { padding: 23px; }
+.services-table .table-subline { max-width: 390px; white-space: normal; }
+.service-state { display: inline-flex; padding: 5px 9px; border-radius: 6px; background: #e8f8f2; color: #087f5b; font-size: 11px; font-weight: 700; }
+.service-state-inactive { background: #f1f5f9; color: #64748b; }
+.service-form-page { max-width: 850px; }
+.service-form-page .record-form { padding: 25px; }
+.service-form-page .checkbox-field { display: flex; align-items: center; gap: 10px; }
+.service-form-page .checkbox-field label { order: 2; margin: 0; }
+.service-form-page .checkbox-field input { order: 1; width: 18px; height: 18px; }
+@media (max-width: 760px) { .services-workspace { padding: 15px; }.service-form-page .record-form { padding: 17px; }.services-table { min-width: 0; } }

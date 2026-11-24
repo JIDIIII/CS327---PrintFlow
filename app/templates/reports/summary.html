@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Reports | PrintFlow{% endblock %}
+{% block page_styles %}<link rel="stylesheet" href="{% static 'css/reports/reports.css' %}?v=2">{% endblock %}
+{% block navigation %}{% include "shared/app_navigation.html" with nav_page="reports" %}{% endblock %}
+{% block content %}
+<main id="main-content" class="feature-main reports-main">
+    <div class="page-heading"><div><p class="eyebrow">Business summary</p><h1>Reports</h1><p>Review orders, completed work, and payments over a selected date range.</p></div></div>
+    <form class="form-card report-filter" method="get" action="{% url 'reports:summary' %}"><label class="filter-field"><span>From</span><input type="date" name="date_from" value="{{ date_from|date:'Y-m-d' }}"></label><label class="filter-field"><span>To</span><input type="date" name="date_to" value="{{ date_to|date:'Y-m-d' }}"></label><button class="button secondary" type="submit">Update report</button></form>
+    {% if date_error %}<p class="message message-info" role="status">The date range was invalid. Showing this month instead.</p>{% endif %}
+    <p class="report-range">Showing {{ date_from|date:"M j, Y" }} to {{ date_to|date:"M j, Y" }}</p>
+    <section class="report-cards" aria-label="Report summary">
+        <article class="summary-card"><span>Orders created</span><strong>{{ created.count }}</strong><small>₱{{ created.value|floatformat:2 }} total order value</small></article>
+        <article class="summary-card"><span>Completed transactions</span><strong>{{ completed.count }}</strong><small>₱{{ completed.value|floatformat:2 }} completed order value</small></article>
+        <article class="summary-card"><span>Payments received</span><strong>{{ payments.count }}</strong><small>₱{{ payments.value|floatformat:2 }} received in this period</small></article>
+        <article class="summary-card report-balance"><span>Outstanding balance</span><strong>₱{{ outstanding|floatformat:2 }}</strong><small>For orders created in this period</small></article>
+    </section>
+    <p class="report-note">Report values come from saved order and payment records. Outstanding balance is calculated per order and never falls below zero.</p>
+</main>
+{% endblock %}
